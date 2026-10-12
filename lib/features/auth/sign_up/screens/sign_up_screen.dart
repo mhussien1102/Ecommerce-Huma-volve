@@ -150,7 +150,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            e.response?.data?['message']?.toString() ?? 'Something went wrong',
+                            e.response?.data?['message']?.toString() ??
+                                'Something went wrong',
                           ),
                           backgroundColor: Colors.red,
                         ),

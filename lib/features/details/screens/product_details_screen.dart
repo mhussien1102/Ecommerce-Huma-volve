@@ -1,13 +1,13 @@
+import 'package:ecommerce_app_huma_volve/features/home/services/models/product_model.dart';
 import 'package:flutter/material.dart';
 
-import '../../../core/dummy_data.dart';
 import '../../../core/theme.dart';
 import '../widgets/color_selector.dart';
 import '../widgets/size_selector.dart';
 import '../../../core/widgets/primary_button.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
-  final Product product;
+  final ProductModel product; // كان Product
 
   const ProductDetailsScreen({super.key, required this.product});
 
@@ -16,18 +16,50 @@ class ProductDetailsScreen extends StatefulWidget {
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
+  // الـ API مبيرجعش ألوان ولا مقاسات، فدي قيم ثابتة مؤقتة للعرض.
+  // لو عايزها من الـ API بعدين، بنضيفها في ProductModel.
+  static const List<Color> _colors = [
+    Color(0xFF212121),
+    Color(0xFF0E7C86),
+    Color(0xFFD9534F),
+    Color(0xFFE0B252),
+  ];
+  static const List<String> _sizes = ['S', 'M', 'L', 'XL'];
+
   late Color _selectedColor;
   late String _selectedSize;
 
   @override
   void initState() {
     super.initState();
-    _selectedColor = widget.product.colors.first;
-    _selectedSize = widget.product.sizes.first;
+    _selectedColor = _colors.first;
+    _selectedSize = _sizes.first;
   }
+
+  /// أول صورة للمنتج (منضّفة من أي علامات زيادة)
+  String? get _imageUrl {
+    final images = widget.product.images;
+    if (images == null || images.isEmpty) return null;
+    final url = images.first.replaceAll(RegExp(r'[\[\]"]'), '').trim();
+    return url.isEmpty ? null : url;
+  }
+
+  Widget _imagePlaceholder() => Container(
+    color: Colors.grey.shade200,
+    alignment: Alignment.center,
+    child: Icon(
+      Icons.image_not_supported_outlined,
+      size: 48,
+      color: Colors.grey.shade400,
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
+    final product = widget.product;
+    final imageUrl = _imageUrl;
+    final title = product.title ?? '';
+
     return Scaffold(
       backgroundColor: AppTheme.background,
       body: CustomScrollView(
@@ -63,10 +95,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ],
             flexibleSpace: FlexibleSpaceBar(
               background: Hero(
-                tag: 'product-${widget.product.id}',
-                child: Image.network(
-                  widget.product.imageUrl,
+                tag: 'product-${product.id}',
+                child: imageUrl == null
+                    ? _imagePlaceholder()
+                    : Image.network(
+                  imageUrl,
                   fit: BoxFit.cover,
+                  loadingBuilder: (context, child, progress) =>
+                  progress == null ? child : _imagePlaceholder(),
+                  errorBuilder: (context, error, stack) =>
+                      _imagePlaceholder(),
                 ),
               ),
             ),
@@ -89,14 +127,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       children: [
                         Expanded(
                           child: Text(
-                            widget.product.name,
+                            title,
                             style: Theme.of(context).textTheme.headlineLarge
                                 ?.copyWith(fontSize: 28, height: 1.2),
                           ),
                         ),
                         const SizedBox(width: 16),
                         Text(
-                          '\$${widget.product.price.toStringAsFixed(2)}',
+                          '\$${(product.price ?? 0).toStringAsFixed(2)}',
                           style: Theme.of(context).textTheme.headlineLarge
                               ?.copyWith(color: AppTheme.primary, fontSize: 24),
                         ),
@@ -110,7 +148,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      widget.product.description,
+                      product.description ?? '',
                       style: Theme.of(context).textTheme.bodyMedium
                           ?.copyWith(height: 1.6, fontSize: 16),
                     ),
@@ -122,7 +160,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     ),
                     const SizedBox(height: 12),
                     ColorSelector(
-                      colors: widget.product.colors,
+                      colors: _colors,
                       selectedColor: _selectedColor,
                       onColorSelected: (color) {
                         setState(() {
@@ -138,7 +176,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     ),
                     const SizedBox(height: 12),
                     SizeSelector(
-                      sizes: widget.product.sizes,
+                      sizes: _sizes,
                       selectedSize: _selectedSize,
                       onSizeSelected: (size) {
                         setState(() {
@@ -152,9 +190,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(
-                              '${widget.product.name} added to cart',
-                            ),
+                            content: Text('$title added to cart'),
                             behavior: SnackBarBehavior.floating,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),

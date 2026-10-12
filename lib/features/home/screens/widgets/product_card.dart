@@ -1,16 +1,33 @@
+import 'package:ecommerce_app_huma_volve/features/home/services/models/product_model.dart';
 import 'package:flutter/material.dart';
 
-import '../../../core/dummy_data.dart';
-import '../../../core/theme.dart';
-import '../../details/screens/product_details_screen.dart';
+import '../../../../core/theme.dart';
+import '../../../details/screens/product_details_screen.dart';
+import 'package:ecommerce_app_huma_volve/features/home/services/models/product_model.dart';
 
 class ProductCard extends StatelessWidget {
-  final Product product;
+   final ProductModel product; // كان Product
 
   const ProductCard({super.key, required this.product});
 
+  /// أول صورة للمنتج (وبننضّفها لو الـ API رجّعها بعلامات زيادة)
+  String? get _imageUrl {
+    final images = product.images;
+    if (images == null || images.isEmpty) return null;
+    final url = images.first.replaceAll(RegExp(r'[\[\]"]'), '').trim();
+    return url.isEmpty ? null : url;
+  }
+
+  Widget _imagePlaceholder() => Container(
+    color: Colors.grey.shade200,
+    alignment: Alignment.center,
+    child: Icon(Icons.image_not_supported_outlined, color: Colors.grey.shade400),
+  );
+
   @override
   Widget build(BuildContext context) {
+    final imageUrl = _imageUrl;
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -21,8 +38,8 @@ class ProductCard extends StatelessWidget {
                 ProductDetailsScreen(product: product),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
+              return FadeTransition(opacity: animation, child: child);
+            },
           ),
         );
       },
@@ -52,11 +69,19 @@ class ProductCard extends StatelessWidget {
                       borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(24),
                       ),
-                      child: Image.network(
-                        product.imageUrl,
+                      child: imageUrl == null
+                          ? SizedBox.expand(child: _imagePlaceholder())
+                          : Image.network(
+                        imageUrl,
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: double.infinity,
+                        loadingBuilder: (context, child, progress) =>
+                        progress == null
+                            ? child
+                            : _imagePlaceholder(),
+                        errorBuilder: (context, error, stack) =>
+                            _imagePlaceholder(),
                       ),
                     ),
                   ),
@@ -88,7 +113,7 @@ class ProductCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      product.name,
+                      product.title ?? '',
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
@@ -102,7 +127,7 @@ class ProductCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '\$${product.price.toStringAsFixed(2)}',
+                          '\$${(product.price ?? 0).toStringAsFixed(2)}',
                           style: const TextStyle(
                             color: AppTheme.primary,
                             fontWeight: FontWeight.bold,

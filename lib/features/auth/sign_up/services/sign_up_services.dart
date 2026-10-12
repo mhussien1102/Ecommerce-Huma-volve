@@ -14,7 +14,7 @@ class SignUpServices {
         "email": signupReqModel.email,
         "name": signupReqModel.name,
         "password": signupReqModel.password,
-        "avatar": "https://api.lorem.space/image/face?w=640&h=480"
+        "avatar": "https://api.lorem.space/image/face?w=640&h=480",
       },
     );
     final jsonData = response.data;
