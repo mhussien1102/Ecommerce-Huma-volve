@@ -1,9 +1,9 @@
 class SignUpReqModel {
-  String email;
-  String name;
-  String password;
+  final String email;
+  final String name;
+  final String password;
 
-  SignUpReqModel({
+  const SignUpReqModel({
     required this.email,
     required this.name,
     required this.password,
