@@ -1,12 +1,12 @@
-import 'package:ecommerce_app_huma_volve/features/home/services/models/product_model.dart';
+import 'package:ecommerce_app_huma_volve/features/home/domain/entites/home_product_entity.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme.dart';
-import '../../../details/screens/product_details_screen.dart';
-import 'package:ecommerce_app_huma_volve/features/home/services/models/product_model.dart';
+import '../../../../../core/theme.dart';
+import '../../../../details/screens/product_details_screen.dart';
+import '../../../data/models/product_model.dart';
 
 class ProductCard extends StatelessWidget {
-   final ProductModel product; // كان Product
+  final HomeProductEntity product; // كان Product
 
   const ProductCard({super.key, required this.product});
 
@@ -21,7 +21,10 @@ class ProductCard extends StatelessWidget {
   Widget _imagePlaceholder() => Container(
     color: Colors.grey.shade200,
     alignment: Alignment.center,
-    child: Icon(Icons.image_not_supported_outlined, color: Colors.grey.shade400),
+    child: Icon(
+      Icons.image_not_supported_outlined,
+      color: Colors.grey.shade400,
+    ),
   );
 
   @override
@@ -38,8 +41,8 @@ class ProductCard extends StatelessWidget {
                 ProductDetailsScreen(product: product),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
+                  return FadeTransition(opacity: animation, child: child);
+                },
           ),
         );
       },
@@ -72,17 +75,17 @@ class ProductCard extends StatelessWidget {
                       child: imageUrl == null
                           ? SizedBox.expand(child: _imagePlaceholder())
                           : Image.network(
-                        imageUrl,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                        loadingBuilder: (context, child, progress) =>
-                        progress == null
-                            ? child
-                            : _imagePlaceholder(),
-                        errorBuilder: (context, error, stack) =>
-                            _imagePlaceholder(),
-                      ),
+                              imageUrl,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                              loadingBuilder: (context, child, progress) =>
+                                  progress == null
+                                  ? child
+                                  : _imagePlaceholder(),
+                              errorBuilder: (context, error, stack) =>
+                                  _imagePlaceholder(),
+                            ),
                     ),
                   ),
                   Positioned(

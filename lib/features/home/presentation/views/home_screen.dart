@@ -1,12 +1,12 @@
-import 'package:ecommerce_app_huma_volve/features/home/cubit/home_cubit.dart';
-import 'package:ecommerce_app_huma_volve/features/home/cubit/home_states.dart';
-import 'package:ecommerce_app_huma_volve/features/home/screens/widgets/category_chip.dart';
-import 'package:ecommerce_app_huma_volve/features/home/screens/widgets/product_card.dart';
+import 'package:ecommerce_app_huma_volve/features/home/presentation/views/widgets/category_chip.dart';
+import 'package:ecommerce_app_huma_volve/features/home/presentation/views/widgets/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../core/dummy_data.dart';
-import '../../../core/theme.dart';
+import '../../../../core/dummy_data.dart';
+import '../../../../core/theme.dart';
+import '../view_model/home_cubit.dart';
+import '../view_model/home_states.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -118,16 +118,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 32),
 
-                    // ---------- الأقسام ----------
+                    // ---------- Categories ----------
                     BlocBuilder<HomeCubit, HomeStates>(
-                      buildWhen: (previous, current) {
-                        if (current is ProductsLoading ||
-                            current is ProductsSuccess ||
-                            current is ProductError) {
-                          return false;
-                        }
-                        return true;
-                      },
+                      buildWhen: (previous, current) =>
+                      current is CategoriesLoading ||
+                          current is CategoriesSuccess ||
+                          current is CategoriesError,
                       builder: (BuildContext context, state) {
                         if (state is CategoriesLoading) {
                           return const Center(
@@ -146,16 +142,16 @@ class _HomeScreenState extends State<HomeScreen> {
                               const SizedBox(width: 12),
                               itemBuilder: (context, index) {
                                 return CategoryChip(
-                                  label: categories[index].name ?? "all",
+                                  label: categories[index].name,
                                   isSelected: _selectedCategoryIndex == index,
                                   onTap: () {
                                     if (_selectedCategoryIndex == index) return;
                                     setState(() {
                                       _selectedCategoryIndex = index;
                                     });
-                                    // يجيب منتجات القسم اللي اتداس عليه
+                                    // Load products of the tapped category
                                     context.read<HomeCubit>().loadProducts(
-                                      categories[index],
+                                      categories[index].id,
                                     );
                                   },
                                 );
@@ -172,6 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
+            // ---------- Products ----------
             BlocBuilder<HomeCubit, HomeStates>(
               buildWhen: (previous, current) =>
               current is ProductsLoading ||
@@ -196,10 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       child: Column(
                         children: [
-                          Text(
-                            state.errorMessage,
-                            textAlign: TextAlign.center,
-                          ),
+                          Text(state.errorMessage, textAlign: TextAlign.center),
                           const SizedBox(height: 12),
                           TextButton(
                             onPressed: () =>

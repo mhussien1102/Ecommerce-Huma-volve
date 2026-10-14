@@ -1,13 +1,14 @@
-import 'package:ecommerce_app_huma_volve/features/home/services/models/product_model.dart';
+import 'package:ecommerce_app_huma_volve/features/home/domain/entites/home_product_entity.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/theme.dart';
+import '../../home/data/models/product_model.dart';
 import '../widgets/color_selector.dart';
 import '../widgets/size_selector.dart';
 import '../../../core/widgets/primary_button.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
-  final ProductModel product; // كان Product
+  final HomeProductEntity product; // كان Product
 
   const ProductDetailsScreen({super.key, required this.product});
 
@@ -99,13 +100,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 child: imageUrl == null
                     ? _imagePlaceholder()
                     : Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, progress) =>
-                  progress == null ? child : _imagePlaceholder(),
-                  errorBuilder: (context, error, stack) =>
-                      _imagePlaceholder(),
-                ),
+                        imageUrl,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, progress) =>
+                            progress == null ? child : _imagePlaceholder(),
+                        errorBuilder: (context, error, stack) =>
+                            _imagePlaceholder(),
+                      ),
               ),
             ),
           ),
