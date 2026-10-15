@@ -13,8 +13,8 @@ class SignUpCubit extends Cubit<SignUpStates> {
     emit(SignUpLoading());
     final result = await signUpUseCase.invoke(request);
     result.fold(
-          (failure) => emit(SignUpError(errorMessage: failure.errorMessage)),
-          (data) => emit(SignUpSuccess(signUpEntity: data)),
+      (failure) => emit(SignUpError(errorMessage: failure.errorMessage)),
+      (data) => emit(SignUpSuccess(signUpEntity: data)),
     );
   }
 }

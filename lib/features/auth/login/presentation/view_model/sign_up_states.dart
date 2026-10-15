@@ -1,4 +1,3 @@
-
 import '../../domain/entites/sign_up_entity.dart';
 
 abstract class SignUpStates {}

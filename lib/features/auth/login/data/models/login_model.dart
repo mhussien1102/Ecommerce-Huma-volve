@@ -1,4 +1,3 @@
-
 import '../../domain/entites/login_entity.dart';
 
 class LoginModel extends LoginEntity {

@@ -13,7 +13,6 @@ import '../view_model/sign_up_cubit.dart';
 import '../view_model/sign_up_states.dart';
 import 'login_screen.dart';
 
-
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
 
@@ -184,16 +183,23 @@ class _SignUpViewState extends State<_SignUpView> {
                           Navigator.pushReplacement(
                             context,
                             PageRouteBuilder(
-                              pageBuilder:
-                                  (context, animation, secondaryAnimation) =>
-                              const LoginScreen(),
+                              pageBuilder: (
+                                context,
+                                animation,
+                                secondaryAnimation,
+                              ) => const LoginScreen(),
                               transitionsBuilder:
-                                  (context, animation, secondaryAnimation, child) {
-                                return FadeTransition(
-                                  opacity: animation,
-                                  child: child,
-                                );
-                              },
+                                  (
+                                    context,
+                                    animation,
+                                    secondaryAnimation,
+                                    child,
+                                  ) {
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: child,
+                                    );
+                                  },
                             ),
                           );
                         },

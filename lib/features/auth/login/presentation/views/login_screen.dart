@@ -13,7 +13,6 @@ import '../../domain/use_case/login_use_case.dart';
 import '../view_model/login_cubit.dart';
 import '../view_model/login_states.dart';
 
-
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
@@ -76,9 +75,8 @@ class _LoginViewState extends State<_LoginView> {
             MaterialPageRoute(builder: (_) => MainNavigationScreen()),
           );
         } else if (state is LoginError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.errorMessage)),
-          );
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(state.errorMessage)));
         }
       },
       child: Scaffold(
@@ -170,15 +168,23 @@ class _LoginViewState extends State<_LoginView> {
                           Navigator.pushReplacement(
                             context,
                             PageRouteBuilder(
-                              pageBuilder: (context, animation, secondaryAnimation) =>
-                              const SignUpScreen(),
+                              pageBuilder: (
+                                context,
+                                animation,
+                                secondaryAnimation,
+                              ) => const SignUpScreen(),
                               transitionsBuilder:
-                                  (context, animation, secondaryAnimation, child) {
-                                return FadeTransition(
-                                  opacity: animation,
-                                  child: child,
-                                );
-                              },
+                                  (
+                                    context,
+                                    animation,
+                                    secondaryAnimation,
+                                    child,
+                                  ) {
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: child,
+                                    );
+                                  },
                             ),
                           );
                         },

@@ -35,9 +35,12 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     apiClient = ApiClient();
     homeRemoteDataSource = HomeRemoteDataSourceImpl(apiClient);
     homeRepo = HomeRepoImpl(homeRemoteDataSource);
-    getProductsUseCase=GetProductsUseCase(homeRepo);
+    getProductsUseCase = GetProductsUseCase(homeRepo);
     getCategiriesUseCase = GetCategiriesUseCase(homeRepo);
-    homeCubit = HomeCubit( getProductsUseCase: getProductsUseCase, getCategiriesUseCase: getCategiriesUseCase);
+    homeCubit = HomeCubit(
+      getProductsUseCase: getProductsUseCase,
+      getCategiriesUseCase: getCategiriesUseCase,
+    );
     super.initState();
   }
 

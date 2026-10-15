@@ -17,11 +17,31 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedCategoryIndex = 0;
+  late final ScrollController scrollController;
 
   @override
   void initState() {
     super.initState();
+    scrollController = ScrollController();
+    scrollController.addListener(_onListen);
     context.read<HomeCubit>().loadHomeData();
+  }
+
+  @override
+  void dispose() {
+    scrollController.removeListener(_onListen);
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onListen() {
+    final pixels = scrollController.position.pixels;
+    final max = scrollController.position.maxScrollExtent;
+    final int triggerDistance = 200;
+
+    if (pixels >= max - triggerDistance) {
+      context.read<HomeCubit>().loadMoreProducts();
+    }
   }
 
   @override
@@ -30,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: AppTheme.background,
       body: SafeArea(
         child: CustomScrollView(
+          controller: scrollController,
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
@@ -218,20 +239,47 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     );
                   }
-                  return SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    sliver: SliverGrid(
-                      gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.7,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
+
+                  return SliverMainAxisGroup(
+                    slivers: [
+                      SliverPadding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        sliver: SliverGrid(
+                          gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.7,
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 16,
+                          ),
+                          delegate: SliverChildBuilderDelegate((
+                              context,
+                              index,
+                              ) {
+                            return ProductCard(product: products[index]);
+                          }, childCount: products.length),
+                        ),
                       ),
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        return ProductCard(product: products[index]);
-                      }, childCount: products.length),
-                    ),
+                      if (state.isLoadingMore)
+                        const SliverToBoxAdapter(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 24),
+                            child: Center(child: CircularProgressIndicator()),
+                          ),
+                        ),
+                      if (!state.hasMore && !state.isLoadingMore)
+                        const SliverToBoxAdapter(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 24),
+                            child: Center(
+                              child: Text(
+                                'No more products',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   );
                 }
 

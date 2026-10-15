@@ -19,7 +19,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
   }) {
     return _handle(
-          () => remoteDataSource.login(email: email, password: password),
+      () => remoteDataSource.login(email: email, password: password),
     );
   }
 

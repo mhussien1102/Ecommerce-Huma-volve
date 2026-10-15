@@ -7,7 +7,10 @@ import '../repo/home_repo.dart';
 class GetProductsUseCase {
   final HomeRepo homeRepo;
   GetProductsUseCase(this.homeRepo);
-  Future<Either<Failure, List<HomeProductEntity>>> invoke(int? categoryId) {
-    return homeRepo.getProducts(categoryId);
+  Future<Either<Failure, List<HomeProductEntity>>> invoke( int? categoryId, {
+    required int offset,
+    required int limit,
+  }) {
+    return homeRepo.getProducts(categoryId, offset: offset, limit: limit);
   }
 }

@@ -6,10 +6,7 @@ import '../models/sign_up_model.dart';
 import '../models/sign_up_req_model.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<LoginModel> login({
-    required String email,
-    required String password,
-  });
+  Future<LoginModel> login({required String email, required String password});
 
   Future<SignUpModel> signUp(SignUpReqModel request);
 }
